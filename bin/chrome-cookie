@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+$: <<  File.expand_path("../lib", File.dirname(__FILE__))
+
+require "chrome-storage"
+
+
+data = ChromeStorage.dump_cookie_data(ARGV[0])
+
+puts JSON.pretty_generate(data)
