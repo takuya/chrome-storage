@@ -30,3 +30,6 @@ security add-internet-password -a USER_NAME -s HOST -w PASSWORD -j COMMENT  -p U
 
 
 ### Enjoy !
+
+
+author http://takuya-1st.hatenablog.jp/entry/2015/12/16/032719
