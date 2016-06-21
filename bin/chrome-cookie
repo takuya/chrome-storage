@@ -1,12 +1,52 @@
 #!/usr/bin/env ruby
 
-require 'json'
-
 $: <<  File.expand_path("../lib", File.dirname(File.realpath(__FILE__)))
-
+require 'json'
+require 'yaml'
+require 'cgi'
+require 'optparse'
 require "chrome-storage"
 
 
-data = ChromeStorage.dump_cookie_data(ARGV[0])
 
-puts JSON.pretty_generate(data)
+
+
+opt = OptionParser.new
+json = cookie = yaml = nil
+
+begin
+  opt.on("-c", "--cookir_jar","http header cookie string"){ cookie=true; }
+  opt.on("-y", "--yaml","http header cookie string"){  yaml =true; }
+  opt.on("-j", "--json","dump json"){ json=true }
+  opt.parse!(ARGV)
+
+  if json.nil? &&  cookie.nil? &&  yaml.nil?
+    json = true
+  end
+
+rescue OptionParser::InvalidOption
+  ARGV << "-h"
+  retry
+end
+
+
+data = ChromeStorage.dump_cookie_data(ARGV[0])
+if json 
+  puts JSON.pretty_generate(data)
+elsif yaml
+  cookie_data =Hash.new{|h,k|h[k]=(Hash.new{|h2,k2| h2[k2] = []  })  }
+  data =  data.each{|host,list|
+    list.map{|e|
+      cookie_data[host][e[:path]] << "#{e[:name]}=#{e[:value]}"
+    }.join("; ")
+  }
+
+  puts YAML::dump(cookie_data)
+elsif cookie 
+  puts  data.map{|host,list|
+    list.map{|e|
+     "#{CGI.escape(e[:name])}=#{CGI.escape(e[:value])}"
+    }.join("; ")
+  }.join("; ")
+end
+  
