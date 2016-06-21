@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+$: <<  File.expand_path("../lib", File.dirname(File.realpath(__FILE__)))
+
+require "chrome-storage"
+
+
+module ChromeStorage
+  class << self
+    @@login_db_path = File.expand_path "~/Library/Application\ Support/Vivaldi/Default/Login\ Data"
+    @@cookie_db_path = File.expand_path "~/Library/Application Support/Vivaldi/Default/Cookies"
+  end
+end
+data = ChromeStorage.dump_login_data(ARGV[0])
+
+puts JSON.pretty_generate(data)
