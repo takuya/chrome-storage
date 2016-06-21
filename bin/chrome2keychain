@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+$: <<  File.expand_path("../lib", File.dirname(File.realpath(__FILE__)))
+
+require "chrome-storage"
+
+
+ChromeStorage.login_data_to_keychain(ARGV[0])
+
